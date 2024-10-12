@@ -1,101 +1,72 @@
-import Image from "next/image";
+"use client"
+import React, { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const [url, setUrl] = useState("");
+    const [shortenedUrl, setShortenedUrl] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    async function shortURL(e) {
+        e.preventDefault();
+        const response = await
+            fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+        if (response.ok) {
+            const data = await response.text();
+            setShortenedUrl(data);
+        }
+        else {
+            alert("Error shortening URL");
+        }
+    }
+
+    return (
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#7c3aed" fill-opacity="1" d="M0,160L80,149.3C160,139,320,117,480,106.7C640,96,800,96,960,117.3C1120,139,1280,181,1360,202.7L1440,224L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path></svg>
+            <div className='container m-auto'>
+                <div className='flex flex-col items-center'>
+                    <svg className='text-violet-600 mb-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="80" height="80" fill="none">
+                        <path d="M9.521 14.4356L14.434 9.52258" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M12.569 15.1084C13.3087 16.2488 13.1113 17.4178 12.2568 18.2723L9.26158 21.2675C8.28318 22.2459 6.69687 22.2459 5.71847 21.2675L2.73234 18.2814C1.75393 17.303 1.75393 15.7167 2.73234 14.7383L5.72755 11.743C6.42949 11.0411 7.76361 10.6357 8.91007 11.4659M15.1088 12.5685C16.2492 13.3082 17.4182 13.1109 18.2727 12.2564L21.2679 9.26114C22.2463 8.28273 22.2463 6.69641 21.2679 5.718L18.2818 2.73185C17.3034 1.75344 15.7171 1.75344 14.7387 2.73185L11.7434 5.72709C11.0415 6.42903 10.6362 7.76315 11.4664 8.90962" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <h2 className=" text-center mb-3 text-violet-600 font-bold text-5xl">Shorten your URLs</h2>
+                    <p className=" text-center text-gray-500 text-sm">
+                        Generate shorter, more memorable links for your content.
+                    </p>
+                    <p className="text-center text-gray-500 text-sm">
+                        No tracking, privacy, or ads.
+                    </p>
+                    <form onSubmit={shortURL} className='flex items-center flex-col w-full'>
+                        <input
+                            className="my-4 w-full p-4 border rounded-md focus:outline-none text-sm"
+                            type="text"
+                            placeholder="Enter your URL"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                        />
+                        <button
+                            className='text-lg font-bold transition bg-violet-600 border-violet-600 border text-white py-2 px-6 hover:text-violet-600 hover:bg-transparent rounded-md'
+                            type='submit'>Shorten</button>
+                    </form>
+                </div>
+                {shortenedUrl && (
+                <div className='flex flex-col items-center gap-4 mt-8'>
+                    <p className='text-3xl font-bold'>Shortened URL:</p>
+                    <a href={shortenedUrl} target="_blank"
+                        rel="noopener noreferrer">
+                        {shortenedUrl}
+                    </a>
+                    {/* copy text */}
+                    <button
+                    className='text-lg font-bold transition bg-violet-600 border-violet-600 border text-white py-2 px-6 hover:text-violet-600 hover:bg-transparent rounded-md'
+                    onClick={() => {
+                        navigator.clipboard.writeText(shortenedUrl)
+                        alert("URL copied to clipboard");
+                        }}>
+                        Copy
+                    </button>
+                </div>
+            )}
+            </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    );
 }
+
